@@ -1,29 +1,57 @@
 // script.js
 var test = "JS READY"
 console.log("script.js " + test)
-// 2.0 - Initialize FIREBASE
-// 2.1 - Get from FIREBASE
-// 2.2 - Import CSV
+// 2.1 - Initialize FIREBASE
+// 2.1.1 - Initialize Google Charts
+// 2.2 - Get from FIREBASE
+// 2.3 - Import CSV
 
 var masterArray = [];
+var chart1 = [0,2,"Chart 1","div1"]
 
 
 // 1.0 |---- Create Array Function ---------------------------------------------------------------------------------------------------|
 // Loop through master array to get column # from each array within. Repeat for b.
 function createArray( a , b ) {
     var newArray = [];
-    var x = [];
-    var y = [];
-    for(i = 1; i < masterArray.length; i++){
-        x.push(masterArray[i][a]);
-        y.push(masterArray[i][b]);   
-    }
-    newArray.push(x);
-    newArray.push(y);
+    for(i = 0; i < masterArray.length; i++){
+        if (i === 0) {
+            var x = [];
+            x.push(masterArray[i][a]);
+            x.push(masterArray[i][b]);
+            console.log(x);
+        }
+        else {
+        var x = [];
+        if (a === 0) {
+        x.push(Date(masterArray[i][a]));
+        }
+        else {
+        x.push(parseInt(masterArray[i][a]));
+        };
+        x.push(parseInt(masterArray[i][b]));
+        console.log(x);
+        };
+        newArray.push(x)   
+    };
+    console.log(masterArray.length)
+    console.log(newArray)
     return(newArray);
+};
+
+// 1.1 |---- Create Chart Functions ---------------------------------------------------------------------------------------------------|
+function LineChart(a) {
+    var chartData = createArray( a[0] , a[1] )
+
+    var data = new google.visualization.arrayToDataTable(chartData,false);
+    var chartOptions = {
+        title: a[2],
+    }
+    
+    var chart = new google.visualization.LineChart(document.getElementById(a[3]));
+
+    chart.draw(data, chartOptions);
 }
-
-
 
 
 // 2.0 |---- On Ready ---------------------------------------------------------------------------------------------------------------|
@@ -46,15 +74,17 @@ $(document).ready(function() {
       firebase.initializeApp(firebaseConfig);
     
       var database = firebase.database()
+
+    // 2.1 |---- Bringing in the FIREBASE ------------------------------------------------------------------------------------------|
+    google.charts.load('current', {'packages':['corechart']});
     
     // 2.2 |---- Get Data from FIREBASE -------------------------------------------------------------------------------------------------|
         
         database.ref().on("value", function(snapshot) {
             masterArray = snapshot.val().master;
             console.log(masterArray);
-            // Create new array from Master
-            var array1 = createArray(0,1);
-            console.log(array1);
+            // Create new Chart from Master array
+            LineChart(chart1);    
         
         })
     
