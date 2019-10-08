@@ -37,3 +37,6 @@ $(document).ready(function() {
             }
         }
     });
+
+    var test = "JS READY"
+    console.log(test)

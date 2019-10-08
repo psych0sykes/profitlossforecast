@@ -1,11 +1,17 @@
 // script.js
-// 1 - FIREBASE
+var test = "JS READY"
+console.log("script.js " + test)
+// 1.0 - Initialize FIREBASE
+// 1.1 - Get
+
+// 2.0 - Import CSV
 
 
 
 
-
-// |---- Bringing in the FIREBASE -------------------------------------------------------------------------------------------------|
+$(document).ready(function() {
+    
+// 1.0 |---- Bringing in the FIREBASE -------------------------------------------------------------------------------------------------|
 
   // Your web app's Firebase configuration
   var firebaseConfig = {
@@ -19,3 +25,45 @@
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
+
+
+
+// 2.0 |---- Import CSV --------------------------------------------------------------------------------------------------------------|
+
+    // The event listener for the file upload
+    document.getElementById('txtFileUpload').addEventListener('change', upload, false);
+
+    // Method that checks that the browser supports the HTML5 File API
+    function browserSupportFileUpload() {
+        var isCompatible = false;
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+        isCompatible = true;
+        }
+        return isCompatible;
+    }
+
+    // Method that reads and processes the selected file
+    function upload(evt) {
+        if (!browserSupportFileUpload()) {
+            alert('The File APIs are not fully supported in this browser!');
+            } else {
+                var data = null;
+                var file = evt.target.files[0];
+                var reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = function(event) {
+                    var csvData = event.target.result;
+                    data = $.csv.toArrays(csvData);
+                    if (data && data.length > 0) {
+                    alert('Imported -' + data.length + '- rows successfully!');
+                    console.log(data)
+                    } else {
+                        alert('No data to import!');
+                    }
+                };
+                reader.onerror = function() {
+                    alert('Unable to read ' + file.fileName);
+                };
+            }
+        }
+    });
